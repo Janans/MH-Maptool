@@ -1,0 +1,52 @@
+.maptool, .maptool div {
+    background: transparent !important;
+}
+
+.maptool {
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.panellines {
+    top: 0;
+    left: 0;
+    height:100%;
+    width:100%;
+    border: 0px solid rgb(143, 24, 180);
+    -webkit-transform: rotate(-35.4deg) skew(18.9deg) scale(0.60, 0.86);
+}
+
+.maptext {
+    top: 0;
+    left: 0;
+    line-height: 81px;
+    text-align: center;
+}
+.panellines.north {
+    border-top-width: 3px;
+}
+.panellines.west {
+    border-left-width: 5px;
+}
+.restextsize-2 {
+    font-size: 12px;
+}
+.restextsize-3 {
+    font-size: 12px;
+}
+.restextsize-4 {
+    font-size: 16px;
+}
+.restextsize-6 {
+    font-size: 24px;
+}
+.restextsize-8 {
+    font-size: 38px;
+}
+.cellcount {
+    color: #253989;
+    text-shadow: 1px 1px 12px rgba(110, 154, 179, 1);
+}
