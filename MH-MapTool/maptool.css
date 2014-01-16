@@ -32,13 +32,13 @@
     border-left-width: 5px;
 }
 .restextsize-2 {
-    font-size: 12px;
+    font-size: 18px;
 }
 .restextsize-3 {
-    font-size: 12px;
+    font-size: 18px;
 }
 .restextsize-4 {
-    font-size: 16px;
+    font-size: 18px;
 }
 .restextsize-6 {
     font-size: 24px;
@@ -49,4 +49,8 @@
 .cellcount {
     color: #253989;
     text-shadow: 1px 1px 12px rgba(110, 154, 179, 1);
+}
+.atmcount {
+    color: #2CA243;
+    text-shadow: 1px 1px 12px rgba(98, 114, 72, 1);
 }

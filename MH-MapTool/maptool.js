@@ -1,16 +1,9 @@
-var mt_cells = false;
-var mt_antimatter = false;
-var mt_resources = false;
-var mt_borders = true;
-
 function maptool(k,e,m) {
-    var cry, gas, cel, atm, kx, ky,
+    var cel, atm, kx, ky,
         lineclass = '',
         mtextclass = '',
         maptext = '';
 
-    cry = m.text.match(/_crystal.gif'\/> (\d)/);
-    gas = m.text.match(/_gas.gif'\/> (\d)/);
     cel = m.text.match(/_cell.gif'\/> (\d)/);
     atm = m.text.match(/_antimatter.png'\/> (\d)/);
     kx = -256+(k%512);
@@ -24,19 +17,20 @@ function maptool(k,e,m) {
     }
     
     
-    mt_cells = true;
-    if (cel && mt_cells && cel[1] != 4 ) {
+    if (atm && atm[0] != 0) {
+        mtextclass += ' atmcount';
+        mtextclass += ' restextsize-' + atm[1];
+        maptext = atm[1];
+    
+    } else if (cel && cel[1] != 4) {
         mtextclass += ' cellcount';
         mtextclass += ' restextsize-' + cel[1];
         maptext = cel[1];
     }
     
     
-    if (window.map[k] !== undefined) {
-        e.innerHTML = '<div class="maptool"><div class="panellines' + lineclass +'"></div><div class="maptext' + mtextclass + '">' + maptext + '</div></div>';
-    } else {
-        e.innerHTML = '';
-    }
+    e.innerHTML = '<div class="maptool"><div class="panellines' + lineclass +'"></div><div class="maptext' + mtextclass + '">' + maptext + '</div></div>';
+
 }
 
 codeInject = String(window.refresh).replace(/(\w+)=_mapID\(planetID(?:.*)(\w+)\.style\.backgroundPosition(?:.*)\[(\w+)(?:[^;]*);/, "$& maptool($1,$2,$3); ");
