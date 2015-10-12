@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "MechHero map tools",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "Display map pnel grid lines and resource field values (on empty ground only!)",
 
   "icons": {
@@ -18,7 +18,7 @@
   
   "content_scripts" : [{
         "matches" : [ "http://*.mechhero.com/World.aspx*"],
-        "js" : ["contentscript.js", "maptool.js"],
+        "js" : ["mapscript.js", "maptool.js"],
         "css" : ["maptool.css"]
     }],
 

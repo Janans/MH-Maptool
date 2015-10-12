@@ -1,5 +1,5 @@
-.maptool, .maptool div {
-    background: transparent !important;
+#map .maptool, #map .maptool div {
+    background: transparent;
 }
 
 .maptool {
@@ -15,7 +15,7 @@
     left: 0;
     height:100%;
     width:100%;
-    border: 0px solid rgb(143, 24, 180);
+    border: 0px solid rgb(143, 64, 80);
     -webkit-transform: rotate(-35.4deg) skew(18.9deg) scale(0.60, 0.86);
 }
 
@@ -28,8 +28,14 @@
 .panellines.north {
     border-top-width: 3px;
 }
+.panellines.north-portal {
+    border-top: 3px solid rgb(143, 24, 180);
+}
 .panellines.west {
     border-left-width: 5px;
+}
+.panellines.west-portal {
+    border-left: 5px solid rgb(143, 24, 180);
 }
 .restextsize-2 {
     font-size: 18px;
