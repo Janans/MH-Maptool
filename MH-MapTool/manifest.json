@@ -14,14 +14,18 @@
   },
 
   "background": { "page": "background.html" },
-  "permissions": [ "tabs", "http://*.mechhero.com/World.aspx" ],
+  "permissions": [ "tabs", "http://*.mechhero.com/World.aspx*", "http://*.mechhero.com/Navigation.aspx*", "http://*.mechhero.pl/World.aspx*", "http://*.mechhero.pl/Navigation.aspx*" ],
   
   "content_scripts" : [{
-        "matches" : [ "http://*.mechhero.com/World.aspx*"],
-        "js" : ["mapscript.js", "maptool.js"],
+        "matches" : [ "http://*.mechhero.com/World.aspx*", "http://*.mechhero.pl/World.aspx*"],
+        "js" : ["mapscript.js"],
         "css" : ["maptool.css"]
-    }],
+    },
+	{	"matches" : [ "http://*.mechhero.com/Navigation.aspx*", "http://*.mechhero.pl/Navigation.aspx*"],
+        "js" : ["navscript.js"],
+        "css" : ["maptool.css"]
+	}],
 
-  "web_accessible_resources": [ "contentscript.js", "maptool.js", "maptool.css" ]
+  "web_accessible_resources": [ "mapscript.js", "maptool.js", "navscript.js", "calcharvest.js", "maptool.css" ]
  
 }

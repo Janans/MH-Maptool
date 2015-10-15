@@ -1,1 +1,1 @@
-chrome.tabs.executeScript(null, {file:"contentscript.js"});
+// chrome.tabs.executeScript(null, {file:"contentscript.js"});

@@ -60,3 +60,31 @@
     color: #2CA243;
     text-shadow: 1px 1px 12px rgba(98, 114, 72, 1);
 }
+.debriscount {
+	font-size: 16px;
+	font-weight: bold;
+	color: #eff590;
+	text-shadow: 0px 0px 16px rgba(245, 225, 92, 1);
+}
+.debris_item img {
+	top: 9px;
+	left: 36px;
+}
+
+#debrisdiplay {
+	background: rgba(110, 110, 110, 0.3);
+    border-radius: 8px;
+    padding: 8px;
+    width: 284px;
+    position: absolute;
+    top: 636px;
+    left: 582px;
+    text-align: left;
+    color: white;
+}
+#debrisdiplay .maptool_h {
+	float: right;
+	font-size: 16px;
+	color: yellow;
+	margin: -2px 4px;
+}

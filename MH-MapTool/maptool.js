@@ -131,8 +131,11 @@ function maptool(k,e,m) {
 		}
     }
     
+    if (m.debris && m.debris.all) {
+		mtextclass += ' debriscount';
+		maptext = '<p class="debris_item">'+ m.debris.topItem +'</p><p>' + m.debris.all + '</p>';
     
-    if (atm && atm[1] != 0) {
+    } else if (atm && atm[1] != 0) {
         mtextclass += ' atmcount';
         mtextclass += ' restextsize-' + atm[1];
         maptext = atm[1];
@@ -148,7 +151,55 @@ function maptool(k,e,m) {
 
 }
 
-codeInject = String(window.refresh).replace(/(\w+)=_mapID\(planetID(?:.*)(\w+)\.style\.backgroundPosition(?:.*)\[(\w+)(?:[^;]*);/, "$& maptool($1,$2,$3); ").replace(/(\w+)\.style\.backgroundPosition="0 0";/, "$& $1.innerHTML = '';");
+var codeInject = String(window.refresh).replace(/(\w+)=_mapID\(planetID(?:.*)(\w+)\.style\.backgroundPosition(?:.*)\[(\w+)(?:[^;]*);/, "$& maptool($1,$2,$3); ").replace(/(\w+)\.style\.backgroundPosition="0 0";/, "$& $1.innerHTML = '';");
+
+function dispalyDebris (c, b) {
+	var a = _mapX(mapID) + c,
+		i = _mapY(mapID) + b;
+	if (!isValid(a, i)) {
+		return
+	}
+	var h = _mapID(planetID, a, i),
+		f = map[h],
+		link = "Navigation.aspx?mid=" + h + " .panel.left .scroll_y",
+//		link = "Navigation.aspx?mid=" + h + " .panel.left",
+		timeout = null,
+		e = event.target;
+	  
+	var timeout = setTimeout(function() {
+		var debrisdiplay = $("#debrisdiplay");
+		if (f.text.match(_debrisField)) {
+			if (f.debris) {
+				debrisdiplay.html(f.debris.details);
+			} else {
+				debrisdiplay.load(link, function(){
+					var debris = $(this).find('.scroll_y'),
+						harvs = countDebris(debris),
+						items = debris.find('.tiny_eq img');
+					
+					debris.removeAttr("style");
+					debris.before('<div class="maptool_h">'+ (harvs.stuff ? harvs.stuff + ' / ' : '') + harvs.all +'</div>');
+					debris.after('<p>harvester loads = <b>'+ harvs.exact +' </b></p>');
+					
+					harvs.topItem = items.length ? items[0].outerHTML : '';
+					harvs.details = this.innerHTML;
+
+					f.debris = harvs;
+					refresh();
+				});
+			}
+		} else {
+			debrisdiplay.empty();
+		}
+		
+	}, 200);
+	  
+	e.onmouseout = function() {
+		clearTimeout(timeout);
+	} 
+};
+
+codeInject = codeInject + "pos = (function(c, b) {var o_pos = pos; return function (c, b) {o_pos(c, b); dispalyDebris(c, b)};})();";
 
 var s = document.createElement('script');
 s.setAttribute('type', 'text/javascript');
