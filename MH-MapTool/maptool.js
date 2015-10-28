@@ -7,7 +7,8 @@ maptool.options = maptool.options || {
 		'scanNPC' : true, // @todo: default to false 
 		'scanDelayTime' : 220,
 		'keepDebrisTime' : 1000 * 60 * 60 * 48, // 48 hours
-		'rescanDebrisTime' : 1000 * 60 * 1 // 1 minute
+		'rescanDebrisTime' : 1000 * 60 * 1, // 1 minute
+		'useDefault' : 'localDefault'
 	};
 
 maptool.portals = {

@@ -40,7 +40,7 @@ var defaultOptions = {
 		'harvsButtonStuff' : false,
 		'harvsButtonMinus' : false,
 		'defaultButton' : 'native',
-		'useDefault' : true
+		'useDefault' : 'globalDefault'
 	};
 
 
