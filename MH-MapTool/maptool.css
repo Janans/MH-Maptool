@@ -66,9 +66,22 @@
 	color: #eff590;
 	text-shadow: 0px 0px 16px rgba(245, 225, 92, 1);
 }
+.debriscount.stored {
+	color: #dddddd;
+}
+
 .debris_item img {
 	top: 9px;
 	left: 36px;
+}
+.maptext p {
+	margin: 8px 0;
+}
+.npcvalue {
+	font-size: 16px;
+	font-weight: bold;
+	color: #ff7516;
+	text-shadow: 0px 0px 12px rgba(255, 55, 55, 1);
 }
 
 #debrisdiplay {

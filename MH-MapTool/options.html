@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Maptool optons</title>
+	<link rel="stylesheet" type="text/css" href="options.css">
+</head>
+<body>
+<div id=content-wrapper>
+<section id="tabs-head">
+	<div class="tab-caption active" id="map-tab">Map</div>
+	<div class="tab-caption" id="nav-tab">Navigation</div>
+</section>
+<form id="options">
+<section class="tab active" id="map-page">
+	<fieldset>
+		<legend>Static</legend>
+		<label>
+			<input type="checkbox" id="grid-lines" name="gridLines" checked> Show grid lines on map
+		</label>
+		<br>
+		<label>
+			<input type="checkbox" id="field-value" name="fieldValue"  checked> Show field antimatter or enegy value
+		</label>
+	</fieldset>
+	<fieldset name="city">
+		<legend>Dispaly over cities</legend>
+		<label>
+			<input type="radio" name="city" value="none" checked> nothing
+		</label>
+		<br>
+		<label>
+			<input type="radio" name="city" value="name"> city name
+		</label>
+		<br>
+		<label>
+			<input type="radio" name="city" value="player"> player name
+		</label>
+		<br>
+		<label>
+			<input type="radio" name="city" value="alliance"> player alliance (if any)
+		</label>
+	</fieldset>
+	<fieldset name="debris">
+		<legend>Active scan</legend>
+		<label>
+			<input type="checkbox" id="scan-debris"  name="scanDebris" > Enable debris scanning (on hover)
+		</label>
+		<hr>
+		<label>
+			<input type="number" id="scan-delay-time"  name="scanDelayTime" value="220" min="200" max="1000" step="10" maxlength="4"> Scan delay (miliseconds) <span id="scan-warning" class="warning" hidden><br><b>Warning:</b> anything less than 200 can too easily couse short temporal *click abuse* block</span>
+		</label>
+		<br>
+		<label>
+			<input type="number" id="keep-debris-time"  name="keepDebrisTime" value="300" min="0" max="2880"> Remember scan results (minutes)
+		</label>
+		<br>
+		<label>
+			<input type="number" id="rescan-debris-time"  name="rescanDebrisTime" value="2" min="0" max="1000"> Minimum time before rescan a field (minutes)
+		</label>
+		<hr>
+		<label>
+			<input type="checkbox" id="scan-npc" name="scanNpc"> Scan NPC max strenght
+		</label>
+		<br>
+	
+	</fieldset>
+</section>
+<section class="tab" id="nav-page">
+	<fieldset>
+		<legend>Harvesters</legend>
+		<label>
+			<input type="checkbox" id="count-harvest"  name="countHarvest" > Calculate debris as Harvester loads (like SHA)
+		</label>
+		<br>
+		<label>
+			Round to <input type="number" id="round-harvs"  name="roundHarvs" value="3" min="-1" max="9"> decimal places (-1 for no rounding)
+		</label>
+	</fieldset>
+	<fieldset>
+		<legend>Add buttons</legend>
+		<label>
+			<input type="checkbox" id="harvs-button-all"  name="harvsButtonAll" >
+			<input type="radio" name="defaultButton" value="all" title="Set as default"> Harvest All
+		</label>
+		<br>
+		<label>
+			<input type="checkbox" id="harvs-button-stuff" name="harvsButtonStuff">
+			<input type="radio" name="defaultButton" value="stuff" title="Set as default"> Harvest only items
+		</label>
+		<br>
+		<label>
+			<input type="checkbox" id="harvs-button-minus"  name="harvsButtonMinus">
+			<input type="radio" name="defaultButton" value="minus" title="Set as default"> Harvest all -1
+		</label>
+		<br>
+		<label>
+			<input type="radio" name="defaultButton" value="native" title="Set as default"> Keep original default button
+		</label>
+		
+	</fieldset>
+	
+</section>
+<!--
+<section>
+	<input type="checkbox" name="portals" hidden>
+	<input type="checkbox" name="useDefault" hidden>
+</section>
+-->
+</form>
+</div> 
+
+<section id="buttons">
+<div id="status"></div>
+<button id="save">Save</button>
+</section>
+
+<script src="options.js"></script>
+
+</body>
+</html>
