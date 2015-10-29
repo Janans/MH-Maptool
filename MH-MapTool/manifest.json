@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "MechHero map tools",
-  "version": "1.0.5",
+  "version": "1.7.999",
   "description": "Display map pnel grid lines and resource field values (on empty ground only!)",
 
   "icons": {
