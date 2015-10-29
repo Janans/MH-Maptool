@@ -43,4 +43,3 @@ var defaultOptions = {
 		'useDefault' : 'globalDefault'
 	};
 
-

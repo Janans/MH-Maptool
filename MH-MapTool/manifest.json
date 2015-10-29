@@ -44,6 +44,6 @@
         "css" : ["maptool.css"]
 	}],
 
-  "web_accessible_resources": [ "mapscript.js", "maptool.js", "navscript.js", "calcharvest.js", "maptool.css" ]
+  "web_accessible_resources": [ "mapscript.js", "maptool.js", "navscript.js", "calcharvest.js", "countdebris.js", "maptool.css" ]
  
 }

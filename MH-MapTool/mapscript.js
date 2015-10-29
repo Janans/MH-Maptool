@@ -21,11 +21,11 @@ var defaultOptions = {
 		'useDefault' : 'mapDefault'
 	};
 
-chrome.storage.sync.get(defaultOptions, function(items) {
+chrome.storage.sync.get(defaultOptions, function(options) {
 
 	var optionsText = 
 		'var maptool = maptool || {}; '+
-		'maptool.options = '+ JSON.stringify(items) +';'
+		'maptool.options = '+ JSON.stringify(options) +';'
 		;
 
 	var op = document.createElement('script');
@@ -33,6 +33,12 @@ chrome.storage.sync.get(defaultOptions, function(items) {
 	op.onload = function() {
 	//    this.parentNode.removeChild(this);
 	};
+	
+	if (options.scanDebris) {
+		var d = document.createElement('div');
+		d.id = 'debrisdiplay'; 
+		document.getElementById("_f0").appendChild(d);
+	}
 	
 /* keep anything else in here just to order things... */
 
@@ -43,7 +49,7 @@ chrome.storage.sync.get(defaultOptions, function(items) {
 	};
 
 	var ch = document.createElement('script');
-	ch.src = chrome.extension.getURL("calcharvest.js");
+	ch.src = chrome.extension.getURL("countdebris.js");
 	ch.onload = function() {
 	//	this.parentNode.removeChild(this);
 	};
@@ -52,9 +58,4 @@ chrome.storage.sync.get(defaultOptions, function(items) {
 	document.body.appendChild(ch);
 	document.body.appendChild(mt);
 
-	var d = document.createElement('div');
-	d.id = 'debrisdiplay'; 
-	document.getElementById("_f0").appendChild(d);
-
 });
-

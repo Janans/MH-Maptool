@@ -1,8 +1,43 @@
-var s = document.createElement('script');
-s.src = chrome.extension.getURL("calcharvest.js");
-s.onload = function() {
-//	this.parentNode.removeChild(this);
-};
-// document.head.appendChild(s);
-var body = document.getElementsByTagName('body')[0];
-body.appendChild(s);
+var defaultOptions = {
+		'countHarvest' : false,
+		'roundHarvs' : 3,
+		'harvsButtonAll' : false,
+		'harvsButtonStuff' : false,
+		'harvsButtonMinus' : false,
+		'defaultButton' : 'native',
+		'useDefault' : 'navDefault'
+	};
+
+chrome.storage.sync.get(defaultOptions, function(options) {
+
+	var optionsText = 
+		'var maptool = maptool || {}; '+
+		'maptool.options = '+ JSON.stringify(options) +';'
+		;
+
+	var op = document.createElement('script');
+	op.id = 'maptool-options';
+	op.innerHTML = optionsText;
+	op.onload = function() {
+	//    this.parentNode.removeChild(this);
+	};
+
+	var d = document.createElement('script');
+	d.src = chrome.extension.getURL("countdebris.js");
+	d.id = 'maptool-countdebris';
+	d.onload = function() {
+	//	this.parentNode.removeChild(this);
+	};
+
+	var c = document.createElement('script');
+	c.src = chrome.extension.getURL("calcharvest.js");
+	c.id = 'maptool-calcharvest';
+	c.onload = function() {
+	//	this.parentNode.removeChild(this);
+	};
+
+	document.body.appendChild(op);
+	document.body.appendChild(d);
+	document.body.appendChild(c);
+	
+});

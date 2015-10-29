@@ -1,15 +1,27 @@
 var maptool = maptool || {};
 
 maptool.options = maptool.options || {
+		// fallback defaults 
 		'gridLines' : true,
-		'portals' : true, // @todo: default to false 
-		'scanDebris' : true, // @todo: default to false 
-		'scanNPC' : true, // @todo: default to false 
-		'scanDelayTime' : 220,
-		'keepDebrisTime' : 1000 * 60 * 60 * 48, // 48 hours
-		'rescanDebrisTime' : 1000 * 60 * 1, // 1 minute
-		'useDefault' : 'localDefault'
+		'portals' : true, // globally default to false 
+		'fieldValue' : true,
+		'city' : 'none',
+		'scanDebris' : true, // globally default to false 
+		'scanNpc' : true, // globally default to false 
+		'scanDelayTime' : 220, // microseconds
+		'keepDebrisTime' : 3000, // 6 hours, in minutes
+		'rescanDebrisTime' : 1, // 1 minute
+		'countHarvest' : true,
+		'roundHarvs' : 3,
+		'useDefault' : 'mapLocalDefault'
 	};
+
+// expand minutes to microseconds
+maptool.options.keepDebrisTime = parseInt(maptool.options.keepDebrisTime) * 60 * 1000;
+maptool.options.rescanDebrisTime = parseInt(maptool.options.rescanDebrisTime) * 60 * 1000;
+
+// force count harvs if scanDebris true
+maptool.options.countHarvest = maptool.scanDebris ? true : maptool.options.countHarvest;
 
 maptool.portals = {
 	shortrow : {
@@ -119,33 +131,60 @@ maptool.portals = {
 	'144' : 'shortrow'
 	};
 
+maptool.addLines = (function() {
+	
+	if (maptool.options.gridLines && maptool.options.portals) {
 
-maptool.addLines = function(k) {
+		return function(k) {
+			var
+				lineclass = '',
+				portals = maptool.portals,
+				x = _mapX(k), // (k%512)-256, 
+				y = _mapY(k) - 1; // 255-Math.floor(k/512)
 
-	if (!maptool.options.gridLines) { return ''; };
+			if ((x%8) == 0) {
+				lineclass += ' north';
+				if (portals[x] && portals[portals[x]][y]) {
+					lineclass += '-portal';
+				};
+			};
 
-	var
-		lineclass = '',
-		portals = maptool.portals,
-		p = maptool.options.portals, 
-		x = _mapX(k), // (k%512)-256, 
-		y = _mapY(k) - 1; // 255-Math.floor(k/512)
-
-    if ((x%8) == 0) {
-        lineclass += ' north';
-        if (p && portals[x] && portals[portals[x]][y]) {
-			lineclass += '-portal';
+			if ((y%8) == 0) {
+				lineclass += ' west';
+				if (portals[y] && portals[portals[y]][x]) {
+					lineclass += '-portal';
+				};
+			};
+			return lineclass;
 		};
-    };
+	
+	} else if (maptool.options.gridLines) {
+	
+		return function(k) {
+			var
+				lineclass = '',
+				x = _mapX(k), // (k%512)-256, 
+				y = _mapY(k) - 1; // 255-Math.floor(k/512)
 
-    if ((y%8) == 0) {
-        lineclass += ' west';
-        if (p && portals[y] && portals[portals[y]][x]) {
-			lineclass += '-portal';
+			if ((x%8) == 0) {
+				lineclass += ' north';
+			};
+
+			if ((y%8) == 0) {
+				lineclass += ' west';
+			};
+			return lineclass;
 		};
-    };
-    
-    return lineclass;
+	};
+
+	return function() {};
+	
+})();
+
+maptool.cityText = function(m) {
+	var key = window[maptool.options.city] + '\\s<b>(.+?)<\\/b>',
+		result = m.text.match(key);
+	return result ? result[1] : '';
 };
 
 maptool.render = function (k,e,m) {
@@ -156,33 +195,42 @@ maptool.render = function (k,e,m) {
         storedId = 'map'+k,
 		cel = m.text.match(/_cell.gif'\/> (\d)/),
 		atm = m.text.match(/_antimatter.png'\/>(\d)/),
-        isDebris = m.text.indexOf(_debrisField) !== -1,
+        isDebris = m.mapclass == 10,
+        showCity = m.mapclass == 1 && maptool.options.city !=="none";
         showDebris = maptool.options.scanDebris,
-        s_debris = localStorage.getItem(storedId);
+        showValue = maptool.options.fieldValue,
+        s_debris = JSON.parse(localStorage.getItem(storedId));
+        
     if (s_debris) {
-		var old = (Date.now() - s_debris.time) > maptool.options.keepDebrisTime;
+		var old = (s_debris.time + maptool.options.keepDebrisTime) < Date.now();
 		if (!isDebris || old) { 
 			localStorage.removeItem(storedId);
 			
 		} else if (showDebris && !m.scanned) {
-			m.debris = JSON.parse(s_debris);
+			m.debris = s_debris;
+
 		};
     };
     
     if (m.npc) {
 		mtextclass += ' npcvalue';
 		maptext = m.npc;
+		
+	} else if (showCity) {
+		mtextclass += ' citytext';
+		maptext = maptool.cityText(m);
 
     } else if (showDebris && isDebris && m.debris && m.debris.all) {
 		mtextclass += ' debriscount';
 		if (m.debris.stored && !m.scanned) { mtextclass += ' stored'; };
 		maptext = '<p class="debris_item">'+ m.debris.topItem +'</p><p>' + m.debris.all + '</p>';
-    } else if (atm && atm[1] != 0) {
+		
+    } else if (showValue && atm && atm[1] != 0) {
         mtextclass += ' atmcount';
         mtextclass += ' restextsize-' + atm[1];
         maptext = atm[1];
 
-    } else if (cel && cel[1] != 4) {
+    } else if (showValue && cel && cel[1] != 4) {
         mtextclass += ' cellcount';
         mtextclass += ' restextsize-' + cel[1];
         maptext = cel[1];
@@ -193,13 +241,11 @@ maptool.render = function (k,e,m) {
 
 };
 
-maptool.inject = String(window.refresh).replace(/(\w+)=_mapID\(planetID(?:.*)(\w+)\.style\.backgroundPosition(?:.*)\[(\w+)(?:[^;]*);/, "$& maptool.render($1,$2,$3); ").replace(/(\w+)\.style\.backgroundPosition="0 0";/, "$& $1.innerHTML = '';");
-
 maptool.scan = function (c, b) {
 	var a = _mapX(mapID) + c,
 		i = _mapY(mapID) + b;
 	if (!isValid(a, i)) {
-		return
+		return;
 	}
 	var h = _mapID(planetID, a, i),
 		f = map[h],
@@ -210,16 +256,23 @@ maptool.scan = function (c, b) {
 	
 	debrisdiplay.empty();
 		
-	if (f.text.match(_debrisField)) {
-		if (f.debris && (f.scanned || ((f.debris.time + maptool.options.rescanDebrisTime) > Date.now()))) {
-			debrisdiplay.html(f.debris.details);
+	if (maptool.options.scanDebris && f.mapclass == 10) {
+		if ('debris' in f
+				&& ((f.scanned || ((f.debris.time + maptool.options.rescanDebrisTime) > Date.now()))
+				|| 'radarout' in f.debris)) {
+				
+			if ('details' in f.debris) {
+				debrisdiplay.html(f.debris.details);
+			} else if ('radarout' in f.debris){
+				debrisdiplay.html(f.debris.radarout);
+			}
 		} else {
 			timeout = setTimeout(function() {
 				$.get(link, function(result){
 					var debris = $(result).find('#navigationControl .panel.left .scroll_y');
 				
 					if (debris.length) { 
-						var harvs = countDebris(debris),
+						var harvs = maptool.countDebris(debris),
 							items = debris.find('.tiny_eq img'),
 							storedId = 'map'+h;
 
@@ -240,16 +293,24 @@ maptool.scan = function (c, b) {
 						localStorage.setItem(storedId, JSON.stringify(harvs));
 						
 						refresh();
+						
 					} else {
 						var radarout = $(result).find('#navigationControl .panel.left p.yellow');
-						debrisdiplay.html(radarout);
+						if (radarout.length) {
+							if ('debris' in f && 'details' in f.debris) {
+								debrisdiplay.html(f.debris.details);
+							} else {
+								debrisdiplay.html(radarout);
+								f.debris.radarout = debrisdiplay.html();
+							};
+						};
 					};
 				});
 			}, maptool.options.scanDelayTime);
-		}
+		};
 	};
 	
-	if (f.text.match(_npc)){
+	if (maptool.options.scanNpc && f.text.match(_npc)){
 		timeout = setTimeout(function() {
 			$.get(link, function(result){
 				f.npc = $(result).find('#navigationControl .panel.left p b:nth-child(2)').text();
@@ -262,6 +323,18 @@ maptool.scan = function (c, b) {
 		clearTimeout(timeout);
 	};
 };
+
+maptool.clearDebrisStorage = function() {
+	Object.keys(localStorage)
+		  .forEach(function(key){
+			   if (/^map\d+/.test(key)) {
+				   localStorage.removeItem(key);
+			   }
+		   });
+};
+
+
+maptool.inject = String(window.refresh).replace(/(\w+)=_mapID\(planetID(?:.*)(\w+)\.style\.backgroundPosition(?:.*)\[(\w+)(?:[^;]*);/, "$& maptool.render($1,$2,$3); ").replace(/(\w+)\.style\.backgroundPosition="0 0";/, "$& $1.innerHTML = '';");
 
 maptool.inject += "pos = (function(c, b) {var o_pos = pos; return function (c, b) {o_pos(c, b); maptool.scan(c, b)};})();";
 
