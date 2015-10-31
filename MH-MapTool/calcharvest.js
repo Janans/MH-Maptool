@@ -11,10 +11,15 @@ maptool.options = maptool.options || {
 };
 
 maptool.modifyNav = function(navPanel) {
-	var debris, harvs, harvestButt, buttonP, lp;
+	var debris, harvs, harvestButt, buttonP, lp, link,
+		buttons = '',
+		defButtonText = ' default" data-kb="13" data-kb-text="Enter"',
+		addButtons = (maptool.options.harvsButtonAll ||
+					maptool.options.harvsButtonMinus ||
+					maptool.options.harvsButtonStuff);
 
 	debris = navPanel.find('.scroll_y');
-	if (debris.length) {
+	if (maptool.options.countHarvest && debris.length) {
 
 		harvs = maptool.countDebris(debris);
 		debris.after('<p>harvester loads = <b>'+ harvs.exact +' </b></p>');
@@ -22,11 +27,37 @@ maptool.modifyNav = function(navPanel) {
 		harvestButt = navPanel.find('a.button.default');
 		buttonP = navPanel.find('a.button.default').parent();
 		lp = harvestButt.attr('href').match(/.*sid=(\d+)&mid=(\d+)&q=(\d+)/);
+		link = '<a href="Building.aspx?sid='+lp[1]+'&mid='+lp[2]+'&q=';
 
-// @todo: parametrize button bulding with options
-		harvestButt.replaceWith('<a href="Building.aspx?sid='+lp[1]+'&mid='+lp[2]+'&q='+lp[3]+'" class="button" tabindex="2">'+ harvestButt.text() + '<span></span></a>');
-		buttonP.after('<p><a href="Building.aspx?sid='+lp[1]+'&mid='+lp[2]+'&q='+harvs.all+'" class="button default" tabindex="4" data-kb="13" data-kb-text="Enter">Harvest All<span></span></a> <a href="Building.aspx?sid='+lp[1]+'&mid='+lp[2]+'&q='+harvs.minus+'" class="button" tabindex="5">Harvest -1<span></span></a></p>');
-	}
+		harvestButt.replaceWith(link +
+		(addButtons ? lp[3] : harvs.all) +'" class="button'+
+		((maptool.options.defaultButton === 'native') ? defButtonText : '"') +
+		'" tabindex="2">'+ harvestButt.text() + '<span></span></a>');
+
+		if (maptool.options.harvsButtonAll) {
+			buttons += link + harvs.all + '" class="button' +
+			((maptool.options.defaultButton === 'all') ? defButtonText : '"') +
+			'>Harvest All<span></span></a> ';
+		};
+
+		if (maptool.options.harvsButtonStuff) {
+			buttons += link + harvs.stuff + '" class="button' +
+			((maptool.options.defaultButton === 'stuff') ? defButtonText : '"') +
+			'>Items only<span></span></a> ';
+		};
+
+		if (maptool.options.harvsButtonMinus) {
+			buttons += link + harvs.minus + '" class="button' +
+			((maptool.options.defaultButton === 'minus') ? defButtonText : '"') +
+			'>Harvest -1<span></span></a> ';
+		};
+
+		if (addButtons) {
+			buttons ='<p>' + buttons + '</p>';
+		};
+
+		buttonP.after(buttons);
+	};
 };
 
 maptool.calcharvest = function() {
