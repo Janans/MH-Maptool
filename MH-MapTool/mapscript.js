@@ -5,6 +5,8 @@ than actually get them from backgroundPage, errr....
 var defaultOptions = {
 		'gridLines' : true,
 		'portals' : false,
+		'gridLinesColor' : '#8f18b4',
+		'gridPortalColor' : '#ef5884',
 		'fieldValue' : true,
 		'city' : 'none',
 		'scanDebris' : false,
@@ -38,7 +40,19 @@ chrome.storage.sync.get(defaultOptions, function(options) {
 		var d = document.createElement('div');
 		d.id = 'debrisdiplay'; 
 		document.getElementById("_f0").appendChild(d);
-	}
+	};
+	
+	if (!options.useDefault) {
+		var st = document.createElement('style');
+		st.innerHTML = 
+			'#map .panellines' +
+			' {border-color: ' + options.gridLinesColor + ';} ' +
+			'#map .panellines.north-portal' +
+			' {border-top-color: ' + options.gridPortalColor + ';} ' +
+			'#map .panellines.west-portal' +
+			' {border-left-color: ' + options.gridPortalColor + ';}';
+		document.head.appendChild(st);
+	};
 	
 /* keep anything else in here just to order things... */
 

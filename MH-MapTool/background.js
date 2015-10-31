@@ -27,6 +27,8 @@ chrome.runtime.onInstalled.addListener(function() {
 var defaultOptions = {
 		'gridLines' : true,
 		'portals' : false,
+		'gridLinesColor' : '#8f18b4',
+		'gridPortalColor' : '#ef5884',
 		'fieldValue' : true,
 		'city' : 'none',
 		'scanDebris' : false,

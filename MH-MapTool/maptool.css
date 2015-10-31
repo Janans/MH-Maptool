@@ -16,7 +16,15 @@
     height:100%;
     width:100%;
     border: 0px solid rgb(143, 64, 80);
-    -webkit-transform: rotate(-35.4deg) skew(18.9deg) scale(0.60, 0.86);
+    /*border: 0px solid rgb(143, 24, 180);*/
+    -webkit-transform: rotate(-34.5deg) skew(20.9deg) scale(0.61, 0.84);
+}
+.panellines.north.west,
+.panellines.north-portal.west,
+.panellines.north.west-portal,
+.panellines.north-portal.west-portal
+ {
+    -webkit-transform: rotate(-34.9deg) skew(20.5deg) scale(0.59, 0.87)
 }
 
 .maptext {
@@ -26,13 +34,13 @@
     text-align: center;
 }
 .panellines.north {
-    border-top-width: 3px;
-}
-.panellines.north-portal {
-    border-top: 3px solid rgb(143, 24, 180);
+    border-top-width: 2px;
 }
 .panellines.west {
-    border-left-width: 5px;
+    border-left-width: 3px;
+}
+.panellines.north-portal {
+	border-top: 3px solid rgb(143, 24, 180);
 }
 .panellines.west-portal {
     border-left: 5px solid rgb(143, 24, 180);

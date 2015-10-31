@@ -50,3 +50,13 @@ body {
 	float: right;
 	margin: 5px;
 }
+input[type="color"] {
+	position: relative;
+	top: -1px;
+	width: 60px;
+	height: 15px;
+	margin: 0px 5px -2px 20px;
+	padding: 0 0;
+	border: 0;
+	background-color: transparent;
+}
