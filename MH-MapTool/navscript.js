@@ -4,7 +4,9 @@ var defaultOptions = {
 		'harvsButtonAll' : false,
 		'harvsButtonStuff' : false,
 		'harvsButtonMinus' : false,
+		'harvsMinus' : 1,
 		'defaultButton' : 'native',
+		'harvsLastLoad' : false, 
 		'useDefault' : 'navDefault'
 	};
 

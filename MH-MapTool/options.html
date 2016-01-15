@@ -5,11 +5,12 @@
 	<link rel="stylesheet" type="text/css" href="options.css">
 </head>
 <body>
-<div id=content-wrapper>
 <section id="tabs-head">
 	<div class="tab-caption active" id="map-tab">Map</div>
 	<div class="tab-caption" id="nav-tab">Navigation</div>
+	<div class="tab-caption" id="hidden-tab">hidden</div>
 </section>
+<div id=content-wrapper>
 <form id="options">
 <section class="tab active" id="map-page">
 	<fieldset>
@@ -49,24 +50,19 @@
 		<label>
 			<input type="checkbox" id="scan-debris"  name="scanDebris" > Enable debris scanning (on hover)
 		</label>
-		<hr>
+		<br>
 		<label>
-			<input type="number" id="scan-delay-time"  name="scanDelayTime" value="220" min="200" max="1000" step="10" maxlength="4"> Scan delay (miliseconds) <span id="scan-warning" class="warning" hidden><br><b>Warning:</b> anything less than 200 can too easily couse short temporal *click abuse* block</span>
+			<input type="checkbox" id="debris-details"  name="debrisDetails" > Dispaly debris details (under the map)
 		</label>
 		<br>
 		<label>
-			<input type="number" id="keep-debris-time"  name="keepDebrisTime" value="300" min="0" max="2880"> Remember scan results (minutes)
-		</label>
-		<br>
-		<label>
-			<input type="number" id="rescan-debris-time"  name="rescanDebrisTime" value="2" min="0" max="1000"> Minimum time before rescan a field (minutes)
+			Remember scan results <input type="number" id="keep-debris-time"  name="keepDebrisTime" value="30" min="0" max="2880"> minutes
 		</label>
 		<hr>
 		<label>
 			<input type="checkbox" id="scan-npc" name="scanNpc"> Scan NPC max strenght
 		</label>
 		<br>
-	
 	</fieldset>
 </section>
 <section class="tab" id="nav-page">
@@ -77,33 +73,73 @@
 		</label>
 		<br>
 		<label>
-			Round to <input type="number" id="round-harvs"  name="roundHarvs" value="3" min="-1" max="9"> decimal places (-1 for no rounding)
+			Round to <input type="number" id="round-harvs"  name="roundHarvs" value="3" min="-1" max="20"> decimal places (-1 for no rounding)
 		</label>
 	</fieldset>
 	<fieldset>
 		<legend>Add buttons</legend>
 		<label>
 			<input type="checkbox" id="harvs-button-all"  name="harvsButtonAll" >
-			<input type="radio" name="defaultButton" value="all" title="Set as default"> Harvest All
+			<input type="radio" id="default-button-all"  name="defaultButton" value="all" title="Set as default"> Harvest All
 		</label>
 		<br>
 		<label>
 			<input type="checkbox" id="harvs-button-stuff" name="harvsButtonStuff">
-			<input type="radio" name="defaultButton" value="stuff" title="Set as default"> Harvest only items
+			<input type="radio" id="default-button-stuff" name="defaultButton" value="stuff" title="Set as default"> Harvest only items
 		</label>
 		<br>
 		<label>
 			<input type="checkbox" id="harvs-button-minus"  name="harvsButtonMinus">
-			<input type="radio" name="defaultButton" value="minus" title="Set as default"> Harvest all -1
+			<input type="radio" id="default-button-minus" name="defaultButton" value="minus" title="Set as default"> Harvest to leave 
+			<input type="number" id="harvs-minus" name="harvsMinus" value="1" min="1" max="99"> harvester loads behind
 		</label>
 		<br>
 		<label>
-			<input type="radio" name="defaultButton" value="native" title="Set as default"> Keep original default button
+			<input type="radio" id="default-button-native" name="defaultButton" value="native" title="Set as default"> Keep original default button
 		</label>
-		
 	</fieldset>
-	
 </section>
+<section class="tab" id="hidden-page">
+	<fieldset>
+		<legend>Portals</legend>
+		<label>
+			<input type="checkbox" name="portals"> Outline portal areas
+		</label>
+	</fieldset>
+	<fieldset>
+		<legend>Harvesters</legend>
+		<label>
+			<input type="checkbox" name="harvsLastLoad"> print harvesters last load
+		</label>
+	</fieldset>
+	<fieldset>
+		<legend>Scan fine-tuning</legend>
+		<label>
+			<input type="number" name="scanDelayTime" value="250" min="200" max="10000" step="10"> (ms) scan sensitivity (onhover timer)
+		</label>
+		<br>
+		<label>
+			<input type="number" name="rescanDebrisTime" value="27000" min="0" max="60000" step="100"> (ms) min time to scan same field again
+		</label>
+		<br>
+		<label>
+			<input type="number" name="scanCounter" value="8" min="1" max="64"> Number of consequtive (fast) scans alloved
+		</label>
+		<br>
+		<label>
+			<input type="number" name="scanPauseTime" value="750" min="250" max="60000" step="50"> Pause (ms) after N consequtive scans
+		</label>
+		<br>
+		<label>
+			<input type="number" name="concurrentRequests" value="3" min="1" max="64"> Number of concurrent requests alloved
+		</label>
+		<br>
+		<label>
+			<input type="number" name="scanBusyDelay" value="200" min="100" max="60000" step="50"> Retry time loop
+		</label>
+	</fieldset>
+</section>
+
 </form>
 </div> 
 

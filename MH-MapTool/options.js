@@ -25,6 +25,8 @@ function readOptions(form, options) {
 		
 		if (typeof(options[item]) === 'boolean') {
 			options[item] = input.checked;
+		} else if (!isNaN(options[item]))  {
+			options[item] = parseInt(input.value);
 		} else {
 			options[item] = input.value;
 		}
@@ -87,6 +89,8 @@ function changeTab(){
 	}
 	document.getElementById(page).classList.add('active');
 	this.classList.add('active');
+	
+	fixScroll();
 }
 
 var tabCaptions = document.getElementsByClassName('tab-caption');
@@ -101,16 +105,22 @@ for (i=0; i<tabCaptions.length; i++) {
 	@todo: 13 = padding + border of wrapper... compute it somehow?
 	@todo: is here a better way to do this than a timer? Do Chrome animate the slot?
 */
+function fixScroll() {
+	var wh = window.innerHeight,
+		dh = document.body.offsetHeight;
+//		document.getElementById('content-wrapper').style.height = 'auto';
+		setTimeout(function() {
+				wh = window.innerHeight;
+			if (dh > wh) {
+				document.getElementById('content-wrapper').style.height = 
+					(wh - document.getElementById('buttons').offsetHeight - 
+						document.getElementById('tabs-head').offsetHeight) + 'px'; 
+			}
+		}, 800);
+}
+
 window.onload = function() {
-var wh = window.innerHeight,
-	dh = document.body.offsetHeight,
-	t= setTimeout(function() {
-			wh = window.innerHeight;
-		if (dh > wh) {
-			document.getElementById('content-wrapper').style.maxHeight = 
-				(wh - document.getElementById('buttons').offsetHeight - 13) + 'px'; 
-		}
-	}, 800);
+	fixScroll();
 };
 
 

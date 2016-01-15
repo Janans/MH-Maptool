@@ -1,24 +1,29 @@
 var maptool = maptool || {};
 
+// fallback defaults 
 maptool.options = maptool.options || {
-		// fallback defaults 
 		'gridLines' : true,
 		'portals' : true, // globally default to false 
 		'fieldValue' : true,
 		'city' : 'none',
 		'scanDebris' : true, // globally default to false 
 		'scanNpc' : true, // globally default to false 
-		'scanDelayTime' : 220, // microseconds
-		'keepDebrisTime' : 3000, // 6 hours, in minutes
-		'rescanDebrisTime' : 1, // 1 minute
+		'scanDelayTime' : 250, // microseconds
+		'scanCounter' : 8, // how many consequtive fast scans alloved
+		'concurrentRequests' : 3, // how many pending requests allowed
+		'scanBusyDelay': 100,
+		'debrisDetails' : false,
+		'scanPauseTime': 750,
+		'keepDebrisTime' : 30, // minutes
+		'rescanDebrisTime' : 27000, // 27 seconds
 		'countHarvest' : true,
 		'roundHarvs' : 3,
+		'harvsLastLoad' : false, 
 		'useDefault' : 'mapLocalDefault'
 	};
 
 // expand minutes to microseconds
 maptool.options.keepDebrisTime = parseInt(maptool.options.keepDebrisTime) * 60 * 1000;
-maptool.options.rescanDebrisTime = parseInt(maptool.options.rescanDebrisTime) * 60 * 1000;
 
 // force count harvs if scanDebris true
 maptool.options.countHarvest = maptool.scanDebris ? true : maptool.options.countHarvest;
@@ -132,7 +137,7 @@ maptool.portals = {
 	};
 
 maptool.addLines = (function() {
-	
+
 	if (maptool.options.gridLines && maptool.options.portals) {
 
 		return function(k) {
@@ -157,9 +162,9 @@ maptool.addLines = (function() {
 			};
 			return lineclass;
 		};
-	
+
 	} else if (maptool.options.gridLines) {
-	
+
 		return function(k) {
 			var
 				lineclass = '',
@@ -188,20 +193,20 @@ maptool.cityText = function(m) {
 };
 
 maptool.render = function (k,e,m) {
-    var 
-        maptext = '',
-        mtextclass = '',
-        lineclass = maptool.addLines(k),
-        storedId = 'map'+k,
+	var
+		maptext = '',
+		mtextclass = '',
+		lineclass = maptool.addLines(k),
+		storedId = 'map'+k,
 		cel = m.text.match(/_cell.gif'\/> (\d)/),
 		atm = m.text.match(/_antimatter.png'\/>(\d)/),
-        isDebris = m.mapclass == 10,
-        showCity = m.mapclass == 1 && maptool.options.city !=="none";
-        showDebris = maptool.options.scanDebris,
-        showValue = maptool.options.fieldValue,
-        s_debris = JSON.parse(localStorage.getItem(storedId));
-        
-    if (s_debris) {
+		isDebris = m.mapclass == 10,
+		showCity = m.mapclass == 1 && maptool.options.city !=="none";
+		showDebris = maptool.options.scanDebris,
+		showValue = maptool.options.fieldValue,
+		s_debris = JSON.parse(localStorage.getItem(storedId));
+
+	if (s_debris) {
 		var old = (s_debris.time + maptool.options.keepDebrisTime) < Date.now();
 		if (!isDebris || old) { 
 			localStorage.removeItem(storedId);
@@ -210,9 +215,9 @@ maptool.render = function (k,e,m) {
 			m.debris = s_debris;
 
 		};
-    };
-    
-    if (m.npc) {
+	};
+
+	if (m.npc) {
 		mtextclass += ' npcvalue';
 		maptext = m.npc;
 		
@@ -220,66 +225,83 @@ maptool.render = function (k,e,m) {
 		mtextclass += ' citytext';
 		maptext = maptool.cityText(m);
 
-    } else if (showDebris && isDebris && m.debris && m.debris.all) {
+	} else if (showDebris && isDebris && m.debris && m.debris.all) {
 		mtextclass += ' debriscount';
 		if (m.debris.stored && !m.scanned) { mtextclass += ' stored'; };
 		maptext = '<p class="debris_item">'+ m.debris.topItem +'</p><p>' + m.debris.all + '</p>';
 		
-    } else if (showValue && atm && atm[1] != 0) {
-        mtextclass += ' atmcount';
-        mtextclass += ' restextsize-' + atm[1];
-        maptext = atm[1];
+	} else if (showValue && atm && atm[1] != 0) {
+		mtextclass += ' atmcount';
+		mtextclass += ' restextsize-' + atm[1];
+		maptext = atm[1];
 
-    } else if (showValue && cel && cel[1] != 4) {
-        mtextclass += ' cellcount';
-        mtextclass += ' restextsize-' + cel[1];
-        maptext = cel[1];
-    };
-    
-    
-    e.innerHTML = '<div class="maptool"><div class="panellines' + lineclass +'"></div><div class="maptext' + mtextclass + '">' + maptext + '</div></div>';
+	} else if (showValue && cel && cel[1] != 4) {
+		mtextclass += ' cellcount';
+		mtextclass += ' restextsize-' + cel[1];
+		maptext = cel[1];
+	};
+
+
+	e.innerHTML = '<div class="maptool"><div class="panellines' + lineclass +'"></div><div class="maptext' + mtextclass + '">' + maptext + '</div></div>';
 
 };
 
+maptool.pauseTimer = null;
+maptool.scanCounter = maptool.options.scanCounter;
+maptool.ccRequests = maptool.options.concurrentRequests;
+
 maptool.scan = function (c, b) {
-	var a = _mapX(mapID) + c,
-		i = _mapY(mapID) + b;
-	if (!isValid(a, i)) {
+	var x = _mapX(mapID) + c,
+		y = _mapY(mapID) + b;
+	if (!isValid(x, y)) {
 		return;
 	}
-	var h = _mapID(planetID, a, i),
+	var h = _mapID(planetID, x, y),
 		f = map[h],
 		link = "Navigation.aspx?mid=" + h,
 		timeout = null,
+		delay = parseInt(maptool.options.scanDelayTime),
 		e = event.target,
 		debrisdiplay = $("#debrisdiplay");
-	
+
 	debrisdiplay.empty();
-		
+
 	if (maptool.options.scanDebris && f.mapclass == 10) {
-		if ('debris' in f
-				&& ((f.scanned || ((f.debris.time + maptool.options.rescanDebrisTime) > Date.now()))
-				|| 'radarout' in f.debris)) {
-				
+		if (('debris' in f)
+				&& (f.scanned 
+						|| ((f.debris.time + maptool.options.rescanDebrisTime) > Date.now())
+						|| ('radarout' in f.debris))) 
+		{
 			if ('details' in f.debris) {
 				debrisdiplay.html(f.debris.details);
+//console.log(f.debris.time + maptool.options.rescanDebrisTime - Date.now(), f.scanned, ('radarout' in f.debris));
 			} else if ('radarout' in f.debris){
 				debrisdiplay.html(f.debris.radarout);
 			}
 		} else {
+			clearTimeout(maptool.pauseTimer);
+
+			if (maptool.scanCounter < 1) {
+				delay = delay + maptool.options.scanPauseTime;
+				maptool.scanCounter = maptool.options.scanCounter;
+			};
 			timeout = setTimeout(function() {
+				maptool.ccRequests--;
 				$.get(link, function(result){
 					var debris = $(result).find('#navigationControl .panel.left .scroll_y');
-				
+
 					if (debris.length) { 
 						var harvs = maptool.countDebris(debris),
 							items = debris.find('.tiny_eq img'),
-							storedId = 'map'+h;
+							storedId = 'map'+h,
+							lastLoad = maptool.options.harvsLastLoad ? 
+										'<span class="yellow"> last: '+ harvs.last +'</span>' : '';
 
 						debris.removeAttr("style");
 						debrisdiplay.html(debris);
-						debris.before('<div class="maptool_h">'+ (harvs.stuff ? harvs.stuff + ' / ' : '') + harvs.all +'</div>');
-						debris.after('<p>harvester loads = <b>'+ harvs.exact +' </b></p>');
+						debris.before('<div class="maptool_h">'+ 
+							(harvs.stuff ? harvs.stuff + ' / ' : '') + harvs.all +'</div>');
+						debris.after('<p>harvester loads = <b>'+ harvs.exact +'</b>'+ lastLoad +'</p>');
 						
 						harvs.topItem = items.length ? items[0].outerHTML : '';
 						harvs.details = debrisdiplay.html();
@@ -291,25 +313,33 @@ maptool.scan = function (c, b) {
 						harvs.time = Date.now();
 						harvs.stored = true;
 						localStorage.setItem(storedId, JSON.stringify(harvs));
-						
+
 						refresh();
-						
+
 					} else {
 						var radarout = $(result).find('#navigationControl .panel.left p.yellow');
 						if (radarout.length) {
 							if ('debris' in f && 'details' in f.debris) {
 								debrisdiplay.html(f.debris.details);
+								f.debris.radarout = radarout[0];
 							} else {
 								debrisdiplay.html(radarout);
+								if (!('debris' in f)) { 
+									f.debris = {};
+								}
 								f.debris.radarout = debrisdiplay.html();
 							};
 						};
 					};
+//console.log('done: '+x+','+y, maptool.ccRequests);
+					maptool.ccRequests++;
 				});
-			}, maptool.options.scanDelayTime);
+//console.log('sent: '+x+','+y, maptool.scanCounter, delay, maptool.ccRequests);
+			maptool.scanCounter--;
+			}, delay);
 		};
 	};
-	
+
 	if (maptool.options.scanNpc && f.text.match(_npc)){
 		timeout = setTimeout(function() {
 			$.get(link, function(result){
@@ -318,13 +348,16 @@ maptool.scan = function (c, b) {
 			});
 		},  maptool.options.scanDelayTime);
 	};
-	
+
 	e.onmouseout = function() {
 		clearTimeout(timeout);
+		maptool.pauseTimer = setTimeout(function() {
+			maptool.scanCounter = maptool.options.scanCounter;
+		}, 2000);
 	};
 };
 
-maptool.clearDebrisStorage = function() {
+maptool.clearStoredDebris = function() {
 	Object.keys(localStorage)
 		  .forEach(function(key){
 			   if (/^map\d+/.test(key)) {
@@ -342,3 +375,5 @@ maptool.s = document.createElement('script');
 maptool.s.setAttribute('type', 'text/javascript');
 maptool.s.innerHTML = maptool.inject + '; refresh();';
 document.head.appendChild(maptool.s);
+
+

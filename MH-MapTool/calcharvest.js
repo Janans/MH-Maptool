@@ -6,23 +6,37 @@ maptool.options = maptool.options || {
 		'harvsButtonAll' : true,
 		'harvsButtonStuff' : false,
 		'harvsButtonMinus' : true,
+		'harvsMinus' : 1,
 		'defaultButton' : 'all',
+		'harvsLastLoad' : true,
 		'useDefault' : 'navLocalDefault'
 };
 
 maptool.modifyNav = function(navPanel) {
 	var debris, harvs, harvestButt, buttonP, lp, link,
 		buttons = '',
+		lastLoad = '',
 		defButtonText = ' default" data-kb="13" data-kb-text="Enter"',
 		addButtons = (maptool.options.harvsButtonAll ||
 					maptool.options.harvsButtonMinus ||
 					maptool.options.harvsButtonStuff);
+					
 
 	debris = navPanel.find('.scroll_y');
 	if (maptool.options.countHarvest && debris.length) {
 
 		harvs = maptool.countDebris(debris);
-		debris.after('<p>harvester loads = <b>'+ harvs.exact +' </b></p>');
+		
+		if (maptool.options.harvsLastLoad) {
+			lastLoad = ' <span class="yellow"> last: '+ harvs.last +'</span>';
+		}
+		
+		if (maptool.options.harvsMinus > 1) {
+			harvs.minus = harvs.minus + 1 - maptool.options.harvsMinus;
+			if (harvs.minus < 1) {harvs.minus = 1};
+		}
+		
+		debris.after('<p>harvester loads = <b>'+ harvs.exact + '</b>' + lastLoad + '</p>');
 
 		harvestButt = navPanel.find('a.button.default');
 		buttonP = navPanel.find('a.button.default').parent();

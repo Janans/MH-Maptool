@@ -19,7 +19,11 @@
     /*border: 0px solid rgb(143, 24, 180);*/
     -webkit-transform: rotate(-34.5deg) skew(20.9deg) scale(0.61, 0.84);
 }
-.panellines.north.west,
+.panellines.north.west
+ {
+    -webkit-transform: rotate(-34.7deg) skew(20.7deg) scale(0.60, 0.86)
+}
+
 .panellines.north-portal.west,
 .panellines.north.west-portal,
 .panellines.north-portal.west-portal

@@ -10,16 +10,18 @@ var defaultOptions = {
 		'fieldValue' : true,
 		'city' : 'none',
 		'scanDebris' : false,
-		'scanDelayTime' : 220,
-		'keepDebrisTime' : 300,
-		'rescanDebrisTime' : 1,
+		'scanDelayTime' : 250,
+		'rescanDebrisTime' : 27000,
+		'scanCounter' : 16,
+		'scanPauseTime': 750,
+		'concurrentRequests' : 4,
+		'scanBusyDelay': 100,
+		'debrisDetails' : false,
+		'keepDebrisTime' : 30,
 		'scanNpc' : false,
 		'countHarvest' : false,
 		'roundHarvs' : 3,
-		'harvsButtonAll' : false,
-		'harvsButtonStuff' : false,
-		'harvsButtonMinus' : false,
-		'defaultButton' : 'native',
+		'harvsLastLoad' : false, 
 		'useDefault' : 'mapDefault'
 	};
 
@@ -39,6 +41,11 @@ chrome.storage.sync.get(defaultOptions, function(options) {
 	if (options.scanDebris) {
 		var d = document.createElement('div');
 		d.id = 'debrisdiplay'; 
+		
+		if (!options.debrisDetails) {
+			d.style.display = 'none';
+		}
+		
 		document.getElementById("_f0").appendChild(d);
 	};
 	

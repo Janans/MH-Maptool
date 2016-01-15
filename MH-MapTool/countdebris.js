@@ -55,24 +55,26 @@ maptool.stuffWeight = {
 
 
 maptool.countDebris = function(debris) {
-	var res = 0, stuff = 0, harvs = {};
+	var 
+		res = 0,
+		stuff = 0,
+		harvs = {};
 
 	debris.find('.res').each(function(){res += parseInt($(this).text());});
 
 	debris.find('.tiny_eq').each(function(){ 
-	var id, count; 
-		id = $(this).find('img').attr('src').match(/\/(\d*)\./)[1]; 
-		count = parseInt($(this).find('b').text()); 
-		stuff += count * maptool.stuffWeight[id];
-	});
+		var id, count; 
+			id = $(this).find('img').attr('src').match(/\/(\d*)\./)[1]; 
+			count = parseInt($(this).find('b').text()); 
+			stuff += count * maptool.stuffWeight[id];
+		});
+	harvs.amount = stuff*100 + res;
 	harvs.res = Math.ceil(res/2000);
 	harvs.stuff = Math.ceil(stuff/20);
-	harvs.last = (stuff*20 + res)%200;
-	harvs.exact = (res/100 + stuff)/20;
+	harvs.last = harvs.amount%2000;
+	harvs.exact = harvs.amount/2000;
 	harvs.all = Math.ceil(harvs.exact);
-	harvs.minus = ((stuff*20 + res)%200 > 3) ? Math.floor(harvs.exact) : Math.floor(harvs.exact) - 1;
-
-//console.log(maptool.options.roundHarvs, harvs);
+	harvs.minus = (harvs.last > 3) ? Math.floor(harvs.exact) : Math.floor(harvs.exact) -1;
 
 	if ('roundHarvs' in maptool.options 
 		&& maptool.options.roundHarvs > -1 

@@ -1,50 +1,63 @@
+html {
+	background-color: #eee;
+}
 body {
 	margin: 0 auto;
 	max-width: 600px;
+	background-color: #fff;
 }
 #content-wrapper {
-	background-color: #eee;
-	padding: 10px 10px 2px 10px;
-	border-bottom: 1px solid #ccc;
+	background-color: transparent;
+	border-top: 1px solid #ccc;
 	overflow-y: auto;
 }
 #tabs-head {
-	clear: both;
 	overflow: hidden;
 	min-height: 20px;
-	margin-bottom: -2px;
+	margin-bottom: -1px;
 }
 .tab-caption {
 	float: left;
-	height: 18px;
-	background-color: transparent;
-	margin: 0px 0px -2px 8px;
-	padding: 5px;
-	border-radius: 5px 5px 0 0;
-	border: 2px solid #999;
-	border-bottom: 0px;
+	box-sizing: content-box;
+	min-width: 64px;
+	background-color: #fff;
+	padding: 8px;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 	font-weight: bold;
+	text-align: center;
+	color: #999;
 	cursor: pointer;
 }
-.tab-caption.active { 
+.tab-caption.active {
 	background-color: #fff;
+	color: #000;
+	border-bottom: 1px solid #fff;
 }
-.tab-caption:hover {background-color: #fff;}
+.tab-caption:hover {
+	color: #000;
+	}
 
 .tab {
 	display: none;
+	clear: both;
 	padding: 10px 5px;
 	margin: 0px 2px 10px 2px;
-	background-color: #fff;
 	border-radius: 5px;
-	border: 2px solid #999;
 }
 .tab.active {
 	display: block;
 }
+fieldset {
+	border: 3px double #ccc;
+	margin: 5px;
+}
+
 .warning { color: #ee3333; }
+
 #buttons {
 	padding: 12px 20px;
+	border-top: 1px solid #ccc;
 }
 #status {
 	float: right;
