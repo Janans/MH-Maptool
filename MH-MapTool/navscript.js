@@ -1,9 +1,11 @@
 var defaultOptions = {
 		'countHarvest' : false,
 		'roundHarvs' : 3,
-		'harvsButtonAll' : false,
+		'harvsButtonAll' : true,
 		'harvsButtonStuff' : false,
-		'harvsButtonMinus' : false,
+		'harvsButtonFixed' : false,
+		'harvsButtonMinus' : true,
+		'harvsFixed' : 1,
 		'harvsMinus' : 1,
 		'defaultButton' : 'native',
 		'harvsLastLoad' : false, 

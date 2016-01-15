@@ -5,7 +5,9 @@ maptool.options = maptool.options || {
 		'roundHarvs' : 3,
 		'harvsButtonAll' : true,
 		'harvsButtonStuff' : false,
+		'harvsButtonFixed' : false,
 		'harvsButtonMinus' : true,
+		'harvsFixed' : 1,
 		'harvsMinus' : 1,
 		'defaultButton' : 'all',
 		'harvsLastLoad' : true,
@@ -59,11 +61,17 @@ maptool.modifyNav = function(navPanel) {
 			((maptool.options.defaultButton === 'stuff') ? defButtonText : '"') +
 			'>Items only<span></span></a> ';
 		};
+		
+		if (maptool.options.harvsButtonFixed) {
+			buttons += link + maptool.options.harvsFixed + '" class="button' +
+			((maptool.options.defaultButton === 'fixed') ? defButtonText : '"') +
+			'>Send '+ maptool.options.harvsFixed +' harvs<span></span></a> ';
+		};
 
 		if (maptool.options.harvsButtonMinus) {
 			buttons += link + harvs.minus + '" class="button' +
 			((maptool.options.defaultButton === 'minus') ? defButtonText : '"') +
-			'>Harvest -1<span></span></a> ';
+			'>Harvest -'+ maptool.options.harvsMinus +'<span></span></a> ';
 		};
 
 		if (addButtons) {
